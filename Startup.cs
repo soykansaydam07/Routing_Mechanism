@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Routing_Mechanism.Handlers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -73,17 +74,32 @@ namespace Routing_Mechanism
                 //Bu kısımda Route Constraints dediğimiz bir yapı ile parametre olarak tanımlanan verilerin  sadece int gelmesini sağlamak gibi durumlar için kullanılan yapıdır 
                 //Mesala Aşağıdaki id parametresinini sadece id gelmesini sağlamak için bu yapı kullanılıcaktır , bildiğim kadarıyla string ifade yerine int kullanımı için genellikle yapılandırılır, diğer tarzlarda kullanımı mevcuttur
                 //Bunun yanında route parametrelerine değerler verilebilmektedir  x gelen verinin  12 karakterli olmasını istedik aşağıdaki örnekte mesala min max gibi yapılar kullanılabilir 
-                endpoints.MapControllerRoute("DefaultThird", "{controller=Home}/{action=Index}/{id:int?}/{x:alpha:length(12)}/{y?}");
+                //endpoints.MapControllerRoute("DefaultThird", "{controller=Home}/{action=Index}/{id:int?}/{x:alpha:length(12)}/{y?}");
 
                 //Bunun yanında CustomConstraint ile custom route yapılandırnalırı yapılabiliyor CustomContrait sınıfı oluşturulup IRouteConstrait interface ile Match metodu override edilir
 
                 endpoints.MapDefaultControllerRoute();
 
                 //Attribute Routing:  Geleneksel yaklaşım olarak startup cs tarafında yönetim sağladığımız merkezi hale getirdiğimiz durumlar , birde Attribute bazlı yaklaşım da controller bazlı hareket ile yapılandırma sağlama olayı
-                endpoints.MapControllers(); //Route için gelen isteği attribute taraflı  controller verileri ile eşleştir , bunu yapmadan controller daki rouelarda çalışma olmaz 
-                                            //Controller bazlı tanımlamalar ["[controller]/[action]"] şeklinde tanımlı ifadeler köşeli tanımsızlar için süslü parantez, route için şablonlarda değişken için doğrudan süslü parantez kullanımı bulunmaktadır 
+                /*endpoints.MapControllers(); */
+                //Route için gelen isteği attribute taraflı  controller verileri ile eşleştir , bunu yapmadan controller daki rouelarda çalışma olmaz 
+                //Controller bazlı tanımlamalar ["[controller]/[action]"] şeklinde tanımlı ifadeler köşeli tanımsızlar için süslü parantez, route için şablonlarda değişken için doğrudan süslü parantez kullanımı bulunmaktadır 
 
                 //Api yapılandırmalırında  Controlelr bazlı Route kullanlırken mvc tarafında konvensiyonel bir yaklaşım sergilenmektedir 
+
+
+                // CustomRouteHandler : Biz yapı olarak alınan request isteğini ilgili yapıda bir controller için göndermemiz gerekmekte  , fakat bunun yerine controller işlemi yapmadan bir şekilde handle edebilme olayına  denmektedir 
+                //Belirli başlı işlemlerde controller yormak yerine resmi resize etmek gibi mesala durumlar controller yollanmadan da yapılabilir bu iş 
+
+                //CustomRouteHandler tarafı aşağıdaki şekilde gibi olmaktadir
+                //endpoints.Map("example-route",async c => 
+                //{
+                //    //https://localhost:5001/example-route endpoint'e gelen herhangi bir istek controller dan ziyade direk olarak buradaki fonksiyon tarafından karşılancaktır.
+                //});
+
+                //Yukarıdaki kısmı yazmak yerine bunu handler tarafında oluşturup devam etmekteyiz
+                //endpoints.Map("example-route", new ExampleHandler().Handler());
+                //Yukarıdaki şekilde artık işlemlerini yapmaya devam edeceğinden dolayı  Handler sınıfna  nasıl bir işlem yapması gerektiği yazıldığı işlem burada biticektir 
             });
         }
     }
