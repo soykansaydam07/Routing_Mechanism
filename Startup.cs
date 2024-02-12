@@ -4,7 +4,10 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Routing_Mechanism.Extensions;
 using Routing_Mechanism.Handlers;
+using Routing_Mechanism.Services;
+using Routing_Mechanism.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,8 +25,19 @@ namespace Routing_Mechanism
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services) // Ioc yapılanmasını sağlayan bir yapıdır, IServiceCollection  da  ilgili IoC yapılanması sağlanacaktır 
         {
+
+            //services.Add(new ServiceDescriptor(typeof(ConsoleLog), new ConsoleLog())); //Add fonsiyonu çok kullanmaz bunun yerine daha dedike bir kullanım vardır 
+            //services.Add(new ServiceDescriptor(typeof(TextLog), new TextLog()));
+            //services.Add(new ServiceDescriptor(typeof(TextLog), new TextLog(), ServiceLifetime.Transient));
+
+            //services.AddSingleton<ConsoleLog>(); //new T() şeklinde baz alınır 
+            //services.AddSingleton<ConsoleLog>(p => new ConsoleLog(5)); // Parametre olarak gelicek bir cons yapısı barsa bu şekilde kullanılıcaktır .
+
+            services.AddScoped<ILog>(p => new ConsoleLog(5)); // Artık bağlantılı yapı oluğu için Interface tarafına ait ilgili class tarafının instance için oluşturulması yeterli olucaktır 
+            //services.AddScoped<ILog, TextLog>(); // Bu şekilde kullanılması için Ilist den türetilmiş olmalı ve constracter tarafında  bir parametre yoksa default değer varsa  kullanılır 
+            
             services.AddControllersWithViews();
         }
 
@@ -32,7 +46,7 @@ namespace Routing_Mechanism
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                app.UseDeveloperExceptionPage(); //Exception page tarafına yönlendirilmesini istersek yazmaktayız 
             }
             else
             {
@@ -43,7 +57,27 @@ namespace Routing_Mechanism
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            app.UseRouting();
+            //app.Run(async c => {async c.Response.WriteAsync("Middleware 1"):})); Kısadevre için oluşturulmuştur
+
+            //app.Use(async (context, task) =>    // Bu kısımdaki task bir sonraki middleware tarafını temsil edicektir invoke yapısı ile bu kısım diğer middleware ayağa kaldırılıcaktır 
+            //{
+            //await task.invoke()
+            //});
+
+            //app.Map("/temp", builder =>  // İf şartı gbi path anlamında yapılandırma kullanmak için kullanılır
+            //{
+            //  builder.Run(async c => {async c.Response.WriteAsync("Middleware 1"):}))
+            //}); 
+
+            //app.MapWhen(c => c.Request.Method == "GET", builder => {    // Sadece path olmayıp daha farklı özelliklere göre filitrelemesi sağlandı.
+
+            //    app.Use(async (context, task) =>
+            //    {
+            //        await task.Invoke();
+            //    });
+            //});
+
+            app.UseRouting(); //Route işlemlerinde gelen  rotanın yapılandırılmasını sağlayan middleware
 
             app.UseAuthorization();
 
@@ -51,6 +85,10 @@ namespace Routing_Mechanism
             //MapControllerRoute: Custom olarak bizim istediğimiz şekilde oluşturulmasını sağladığımız route yapılanmasıdır 
             app.UseEndpoints(endpoints =>
             {
+
+                //Route Mekanizması
+
+
                 //Default olarak verilen değer MapDefaultControllerRoute tarafı ile aynı şekilde olduğu gözükmekte
                 //endpoints.MapControllerRoute(
                 //    name: "default",
@@ -100,6 +138,68 @@ namespace Routing_Mechanism
                 //Yukarıdaki kısmı yazmak yerine bunu handler tarafında oluşturup devam etmekteyiz
                 //endpoints.Map("example-route", new ExampleHandler().Handler());
                 //Yukarıdaki şekilde artık işlemlerini yapmaya devam edeceğinden dolayı  Handler sınıfna  nasıl bir işlem yapması gerektiği yazıldığı işlem burada biticektir 
+
+
+                //Middleware pipelime yapılandırılması 
+
+
+                //Web uygulamsında requeste verilicek response a kadara arada farklı işlemler ile sürceim gidişatına farklı yön vermek için aralara eklenebilen pipeline mekanizmalrıdır 
+                //Mekanizma sarmla şekilde işlem yapmaktadır ilk middleware tetiklendi logic kısmı yapıldı sonrasısında ikinci middleware tarafına gider taki middleware bitene kadar , sonrasında en iç middleware
+                //işlemi logic tarafını bitirip bir üst middleware tarafına döndüğünde o da logini yapıp bir üstekine dönücek şekilde işlemlerini yapıcaktır 
+                //.net yapılanması middleware yapılanmasını desteklicektir startup ya da program cs tarafında configure sisteminin içindeki tüm yapılanma middleware yapılı bir yaklaşımdır denebilir
+                //.net tarafında middleware yapıları use adıyla başlar Configure metodu içinde tanımlıdır tetiklenme sırası derleyici satırına göre yapılıcaktr 
+
+                //Hazır miidleware lar (yani çekirdek anlamında işlem yapılmasını sağlayan defauşt da olan middleware lar  Run ,Use Map ,MapWhen) şeklindedir , .Net tarafında hazır yapılardır
+
+                //Run Metodu : Kendisinden sonra gelen middlewareı tetiklemez , haliyle kendisinden sonraki middleware tarafını tetiklemiyeceği için o anki çıktıyı vericektir bu yapıya shortcircuit denir
+                //Use Metodu : Ana middleware yapısı olarakda geçebilir kendisinden bir sonraki metodu invoke ederek devam eden yapıdır 
+                //Map Metodu : Talep gönderilen path yapısına göre filtrelemek isteyebiliriz bunun için Use ya da run fonksiyonlarında if kontrolü sağlayabilir ya da map metodu ile yaklaşım sergilenir 
+                //MapWhen Metodu : Request tarafında pathe gmre map metodunda filitreleme yaparken mapwhen tarafında gelen requestin herhangi bir çzelliğine göre yapılıcaktır 
+
+                //Bunun yanında custom miidleware oluşturmak için ,
+                //Yazılan middleware bir class olup extension olarak IApplicationBuilder a entegre edersek kendi custom middleware yapımız oluşucaktır 
+                //İlk olarak Middleware yapısı oluşturulucak daha sonra bu kısma extension eklenebilecek şekle getirilicek aşağıdaki şekilde custom yapı kullanılabilecektir. 
+                //app.UseHello();
+
+
+                //Dependency Injection ve IoC Yapılandırılması (Invercion Of Control)
+
+
+                //Aslında ikisi farklı tasarım desenleri denilebilir, 
+                //Dependancy Injection için, 
+                //Bağımlılık oluşturacak parçaların ayrılıp , bunların dışarıdan verilmesiyle sistem içerisine dahil etme durumudur , dependancy Invercion yapıs bir prensip olp bu prensibi tam olara kuygulamaya çalışan patter dir aslında 
+                //Yapı da bağımlılık new operetörü ile diğer sınıftan instance oluşturmaktan oluyor , bunun yerine bu sınıf bir ana Interface den türetilse ve cons tarafında parametre olarak bu interface parametre olarak alınırsa bu bağımlılık ortadan kalkıcaktır 
+                //IoC Yapılandırması için , 
+                //Bizim dependancyInjection ile yaptığımız yapıda bu yapının çok karmaşık haline geldiğini düşünürsek , yani A class ı hem b hem c hem d,e,f gibi bir çok kısımdan inject alıyorsa  karmaşayı engellemek için oluştuurlan conteynerlardır
+                //Bu konteynerlarda genel olarak , dictonary bir kolleksiyon yapısında bağımlılıklar vardır ,  oluşan instanceların nasıl oluşması gerektiği gibi konuların configüre edilmesi durumları buraya eklenir 
+                //.net tarafında bu ioc yapılanması sistemin içinde zaten bulunmaktadır ve ismide built-in şeklindedir , içerisine koyulacak değerleri 3 farklı davranışla içeri alabilmektedir 
+                //Singleton : Uygulama bazında tekil nesne oluşturur ve tüm taleplere bu nesne ile cevap verir
+                //Scoped : Her request için bir nesne üretiler ve orequest de olan tüm isteklere o nesneyi gönderir 
+                //Transient : Her requestin her talebine karşılık  bir nesne üretilir ve en maliyetli olan kısım budur
+                //default olarak eklenen servislerin yaşaç döngüleri singleton olarak eklenicektir 
+
+
+                //Area Nedir ve ne amaçla kullanılır ?
+
+
+                //Web uygulamasında, farklı işlevsellikleri ayırmak için kullanılan özelliktir Genellikle bu yapı , kullanıcı ve admin panel olarak ayarlanma anlamında kullanılabilir
+                //Her bir area view ve modal katmanı olucaktır . Yöetim panellerinde , farklı role kısımlarında mantıksal olarak ayrılabilen durumlarda kullanılabilir
+                //Mvc yaklaşımında kullanılmaktadır 
+                //Area içindeki controller area attribute yapısı ile işaretlenmelidir 
+                //Sonrasında Area yapılarına route belirlemesi yapmak gerekmektedir. Aşağıdaki şekilde bir rota tanımlaması yapılmış olmaktadır 
+
+                endpoints.MapControllerRoute( //Default area rotası belirlememizi sağlamaktadır
+                    name:"AdminPanel",
+                    pattern:"{area:exists}/{controller=Home}/{action=Index}/{id?}"
+                    );
+                //MapAreaControllerRoute fonsiyonu ile özel route yapıları area için tanımlana bilecektir.
+                endpoints.MapAreaControllerRoute(
+                    name: "AdminPanel",
+                    areaName: "AdminPanel",
+                    pattern: "AdminPanel/{controller=Home}/{action=Index}/{id?}"
+
+                    );
+                //Arealar arası bağlantı oluşturma  için TagHelpers ve Html Helpers ile ActionLink veya asp-area yapılandırması kullanılarak bu yapı sağlanmaktadır 
             });
         }
     }

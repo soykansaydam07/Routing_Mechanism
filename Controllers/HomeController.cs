@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Routing_Mechanism.Models;
+using Routing_Mechanism.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,22 +10,25 @@ using System.Threading.Tasks;
 
 namespace Routing_Mechanism.Controllers
 {
- //   [Route("[controller]/[action]")] // Bir şablon tanımlaması yapılıcak attribute tanımlaması olduğu için köşeli parantez kullanılırken default(ön tanımlılar) olmayıp custom verilerde eklenicekse o zaman süslü parantez ile eklenme sağlanır
+    //   [Route("[controller]/[action]")] // Bir şablon tanımlaması yapılıcak attribute tanımlaması olduğu için köşeli parantez kullanılırken default(ön tanımlılar) olmayıp custom verilerde eklenicekse o zaman süslü parantez ile eklenme sağlanır
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        readonly ILog _log;
+        //Controller Cons kısmından Ioc container tarafı için Nesne talebinde  bulunulabilir
+        public HomeController(ILog log)
         {
-            _logger = logger;
+            _log = log;
         }
 
-        public IActionResult Index(string Id, string x, string y)
+        //public IActionResult Index(string Id, string x, string y)
+        //Controller yerine aciton tarafında Ioc yapılanması sonucunda nesne talep ediceksem , aşağıdaki şekildeki kullanımı yeterli olucaktır
+        //public IActionResult Index([FromServices]ILog log )
+        public IActionResult Index()
         {
             return View();
         }
 
-   //     [Route("[act]/{id?}")] //Bu şekilde istenirse action bazlı iç veride verilmektedir  id  kısmına  tanımlı olmadığı için süslü paranteze alınmadı 
+        //     [Route("[act]/{id?}")] //Bu şekilde istenirse action bazlı iç veride verilmektedir  id  kısmına  tanımlı olmadığı için süslü paranteze alınmadı 
         public IActionResult Privacy(int? id)
         {
             return View();
