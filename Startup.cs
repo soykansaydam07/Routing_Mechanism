@@ -200,6 +200,9 @@ namespace Routing_Mechanism
 
                     );
                 //Arealar arası bağlantı oluşturma  için TagHelpers ve Html Helpers ile ActionLink veya asp-area yapılandırması kullanılarak bu yapı sağlanmaktadır 
+
+                //ViewModal yapısı : genel olarak front tarafına gönderim sırasında çoklu obje oluşturma , ve istenen verieri ön tarafa gönderme gibi konularda kullanılır
+                //ViewModal içinde function yapısıda olabilir 
             });
         }
     }
