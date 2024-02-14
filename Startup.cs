@@ -201,8 +201,28 @@ namespace Routing_Mechanism
                     );
                 //Arealar arası bağlantı oluşturma  için TagHelpers ve Html Helpers ile ActionLink veya asp-area yapılandırması kullanılarak bu yapı sağlanmaktadır 
 
+
                 //ViewModal yapısı : genel olarak front tarafına gönderim sırasında çoklu obje oluşturma , ve istenen verieri ön tarafa gönderme gibi konularda kullanılır
+
+
                 //ViewModal içinde function yapısıda olabilir 
+
+                //ViewModal yapılanmasını Entity Nesnesine dönüştürme konusu için yapılabilecekler 
+                
+                //Manuel Dönüştürme : Tüm propertileri diğer tüm propertilerle eşitleme anlamında kullanılabilir .
+               
+                //Implicit Operator Overload(Bilinçsiz) :  Personal i personelViewModal tarafına çevirmek için yapılması gereken 
+                //İlgili Personal tarafının Modeline geldim implicit fonksiyonlar static olmalıdır 
+                //public static implicit operator PersonalCreateViewModal(Personal model)
+                //{ return new PersonalCreateViewModal{} } şeklinde metodu yazılarak yapılabilir ya da tam terside yapılabilir bu şekilde dönüşüm yapılmış olucaktır Direk atanabilectir bundan sonrasında 
+                
+                //Explicit Operator Overload(Bilinçli) :Personal i personelViewModal tarafına çevirmek için yapılması gereken 
+                //public static explicit operator PersonalCreateViewModal(Personal model)
+                //{ return new PersonalCreateViewModal{} } şeklinde metodu yazılarak yapılabilir ya da tam terside yapılabilir bu şekilde dönüşüm yapılmış olucaktır Fakat burada bilinçli bir şekilde türe cast edilmesi gerekmektedir  
+                
+                //Reflection İle Döüştürme : Bir interface in class ın için de member düzeyinde veriyi ele alabilmemizi sağlayan bir yapılanma çeşididir
+                //Auto Mapper ile döüştürme :
+
             });
         }
     }
