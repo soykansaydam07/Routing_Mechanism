@@ -38,6 +38,7 @@ namespace Routing_Mechanism
             services.AddScoped<ILog>(p => new ConsoleLog(5)); // Artık bağlantılı yapı oluğu için Interface tarafına ait ilgili class tarafının instance için oluşturulması yeterli olucaktır 
             //services.AddScoped<ILog, TextLog>(); // Bu şekilde kullanılması için Ilist den türetilmiş olmalı ve constracter tarafında  bir parametre yoksa default değer varsa  kullanılır 
             
+            //services.AddAutoMapper(typeof(PersonelProfil)) //AutoMapper kütüphanesini kullanmak için oluşturulmuştur
             services.AddControllersWithViews();
         }
 
@@ -209,6 +210,8 @@ namespace Routing_Mechanism
 
                 //ViewModal yapılanmasını Entity Nesnesine dönüştürme konusu için yapılabilecekler 
                 
+
+                //Aşağıdaki kısımlar controoler kısımlarıiçin yazılıcaktır 
                 //Manuel Dönüştürme : Tüm propertileri diğer tüm propertilerle eşitleme anlamında kullanılabilir .
                
                 //Implicit Operator Overload(Bilinçsiz) :  Personal i personelViewModal tarafına çevirmek için yapılması gereken 
@@ -221,7 +224,12 @@ namespace Routing_Mechanism
                 //{ return new PersonalCreateViewModal{} } şeklinde metodu yazılarak yapılabilir ya da tam terside yapılabilir bu şekilde dönüşüm yapılmış olucaktır Fakat burada bilinçli bir şekilde türe cast edilmesi gerekmektedir  
                 
                 //Reflection İle Döüştürme : Bir interface in class ın için de member düzeyinde veriyi ele alabilmemizi sağlayan bir yapılanma çeşididir
-                //Auto Mapper ile döüştürme :
+                //Bu reflection yapılanmasını servis hale getirmek gerekirse Business tarafındaki ifade çalıştırılırsa yapılacak işlemler aşağıdaki gibi yapılmalı
+                //Personal p = TypeConversion.Conversion<PersonalCreateVm,Personal>(personelCreateVM);
+
+
+                //Auto Mapper ile döüştürme : Özel bir kütüphane olarak kullanılmkatadır 
+                //Nuget den AutoMapper indirilmeli
 
             });
         }
