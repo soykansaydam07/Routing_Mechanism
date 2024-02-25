@@ -231,6 +231,10 @@ namespace Routing_Mechanism
                 //Auto Mapper ile döüştürme : Özel bir kütüphane olarak kullanılmkatadır 
                 //Nuget den AutoMapper indirilmeli
 
+
+                //AppSetting.json dosyası nedir ne işe yarar ?
+                //Yapıcağımız operasyona göre ya da ortama göre asp.net yapılandırmasını sağlayan bir configürasyon dosyadır , Yapılandırma olarak , herhangi bir ortamda gerçekleşeceği davranışlara göre belirlememizi sağlayan statik değerlerin tanımlanmasıdır 
+                //Eski asp.net projeleri için web.config tarafının karşılığı , appsetting.json iken globalasax in karşılığıda StartUp.cs olarak karşılanabilir 
             });
         }
     }
