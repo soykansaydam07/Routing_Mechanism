@@ -209,20 +209,20 @@ namespace Routing_Mechanism
                 //ViewModal içinde function yapısıda olabilir 
 
                 //ViewModal yapılanmasını Entity Nesnesine dönüştürme konusu için yapılabilecekler 
-                
+
 
                 //Aşağıdaki kısımlar controoler kısımlarıiçin yazılıcaktır 
                 //Manuel Dönüştürme : Tüm propertileri diğer tüm propertilerle eşitleme anlamında kullanılabilir .
-               
+
                 //Implicit Operator Overload(Bilinçsiz) :  Personal i personelViewModal tarafına çevirmek için yapılması gereken 
                 //İlgili Personal tarafının Modeline geldim implicit fonksiyonlar static olmalıdır 
                 //public static implicit operator PersonalCreateViewModal(Personal model)
                 //{ return new PersonalCreateViewModal{} } şeklinde metodu yazılarak yapılabilir ya da tam terside yapılabilir bu şekilde dönüşüm yapılmış olucaktır Direk atanabilectir bundan sonrasında 
-                
+
                 //Explicit Operator Overload(Bilinçli) :Personal i personelViewModal tarafına çevirmek için yapılması gereken 
                 //public static explicit operator PersonalCreateViewModal(Personal model)
                 //{ return new PersonalCreateViewModal{} } şeklinde metodu yazılarak yapılabilir ya da tam terside yapılabilir bu şekilde dönüşüm yapılmış olucaktır Fakat burada bilinçli bir şekilde türe cast edilmesi gerekmektedir  
-                
+
                 //Reflection İle Döüştürme : Bir interface in class ın için de member düzeyinde veriyi ele alabilmemizi sağlayan bir yapılanma çeşididir
                 //Bu reflection yapılanmasını servis hale getirmek gerekirse Business tarafındaki ifade çalıştırılırsa yapılacak işlemler aşağıdaki gibi yapılmalı
                 //Personal p = TypeConversion.Conversion<PersonalCreateVm,Personal>(personelCreateVM);
@@ -233,8 +233,22 @@ namespace Routing_Mechanism
 
 
                 //AppSetting.json dosyası nedir ne işe yarar ?
+
+
                 //Yapıcağımız operasyona göre ya da ortama göre asp.net yapılandırmasını sağlayan bir configürasyon dosyadır , Yapılandırma olarak , herhangi bir ortamda gerçekleşeceği davranışlara göre belirlememizi sağlayan statik değerlerin tanımlanmasıdır 
                 //Eski asp.net projeleri için web.config tarafının karşılığı , appsetting.json iken globalasax in karşılığıda StartUp.cs olarak karşılanabilir 
+                //Statik olan değerler kodun içerisinde saklanmaması lazımdır, password ,connection string verileri gibi verilerde sıkıntı oluşturur 
+                //AppSetting dışındaki yapılandırma araçları olarak , secrets.json ,environment variables olarak söylenebilir
+                // .ConfigureAppConfiguration(b => b.AddJsonFile("soykan.json")) //Özel olan dosya bu şekilde eklenmelidir fakat appsetting ise default olduğundan sıkıntı olmıyacaktır  
+                //Yukarıdaki program.cs tarafına eklendiği gibi eklenmesi gereklidir 
+
+                //Asp.Net Core Ioc providerında bulunan bir servis olup , uygulamadaki appsettings.json dosyasını okuyup içerisindeki valueları getirir dolayısı ile Ioc den bu servisi dependancy Injection ile talep edip controllerda bu ilgili dosyadaki veriyi kullanabiliriz 
+                //IConfiguration dan controller için nesne oluşturup bu nesne için veri _configuration["Ornek"] şeklinde çekilebilir bir iç nesnede ise konu _configuration["Ornek:Name"]
+                //_configuration.GetSection("Person")  şeklinde istenilen ifade elde edilebilir bir obje döndürür
+                //envirement yapılandırmasında çalışma ortamı belirtilerek devam edilebilir ve app setting yapılanmasında da etkilenmesine neden olucaktır 
+
+                //Oluştuurlan yapılandırmada Get metodu ullanarak appSettings verilerini çağırmada zor olucağı için ioc yapılandırmasınıa bu verileri nesne olarak koyup sonrasında ilgili nesneden veriler istenildiği zaman çekilebilir hale gelicektir 
+                //Bu yapılandırma daki kullanıma options pattern denilmektedir 
             });
         }
     }

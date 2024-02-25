@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper.Configuration;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Routing_Mechanism.Models;
 using Routing_Mechanism.Services.Interfaces;
@@ -14,10 +15,17 @@ namespace Routing_Mechanism.Controllers
     public class HomeController : Controller
     {
         readonly ILog _log;
+        readonly IConfiguration _configuration;
         //Controller Cons kısmından Ioc container tarafı için Nesne talebinde  bulunulabilir
-        public HomeController(ILog log)
+        public HomeController(ILog log , IConfiguration configuration)
         {
             _log = log;
+            _configuration = configuration;
+        }
+
+        public IActionResult Privacy(int? id)
+        {
+            return View();
         }
 
         //public IActionResult Index(string Id, string x, string y)
@@ -28,8 +36,8 @@ namespace Routing_Mechanism.Controllers
             return View();
         }
 
-        //     [Route("[act]/{id?}")] //Bu şekilde istenirse action bazlı iç veride verilmektedir  id  kısmına  tanımlı olmadığı için süslü paranteze alınmadı 
-        public IActionResult Privacy(int? id)
+
+        public IActionResult Test()
         {
             return View();
         }
