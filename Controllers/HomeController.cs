@@ -1,5 +1,7 @@
 ﻿using AutoMapper.Configuration;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Routing_Mechanism.Models;
 using Routing_Mechanism.Services.Interfaces;
@@ -16,11 +18,14 @@ namespace Routing_Mechanism.Controllers
     {
         readonly ILog _log;
         readonly IConfiguration _configuration;
+        readonly IWebHostEnvironment _webHostEnvironment;  //Genelde bizim enviroment yapılanmasında bazı kısımlardaki veri kontrolü gibi durumlar için kullanılmalıdır 
+
         //Controller Cons kısmından Ioc container tarafı için Nesne talebinde  bulunulabilir
-        public HomeController(ILog log , IConfiguration configuration)
+        public HomeController(ILog log , IConfiguration configuration , IWebHostEnvironment webHostEnvironment)
         {
             _log = log;
             _configuration = configuration;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public IActionResult Privacy(int? id)
@@ -33,6 +38,7 @@ namespace Routing_Mechanism.Controllers
         //public IActionResult Index([FromServices]ILog log )
         public IActionResult Index()
         {
+            _webHostEnvironment.IsDevelopment(); //Sistemde enviroment yapılardaki hangi ortamda olduğumuzu anlamak için kullanılabilir 
             return View();
         }
 

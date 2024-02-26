@@ -238,7 +238,7 @@ namespace Routing_Mechanism
                 //Yapıcağımız operasyona göre ya da ortama göre asp.net yapılandırmasını sağlayan bir configürasyon dosyadır , Yapılandırma olarak , herhangi bir ortamda gerçekleşeceği davranışlara göre belirlememizi sağlayan statik değerlerin tanımlanmasıdır 
                 //Eski asp.net projeleri için web.config tarafının karşılığı , appsetting.json iken globalasax in karşılığıda StartUp.cs olarak karşılanabilir 
                 //Statik olan değerler kodun içerisinde saklanmaması lazımdır, password ,connection string verileri gibi verilerde sıkıntı oluşturur 
-                //AppSetting dışındaki yapılandırma araçları olarak , secrets.json ,environment variables olarak söylenebilir
+                //AppSetting dışındaki yapılandırma araçları olarak , secret.json ,environment variables olarak söylenebilir
                 // .ConfigureAppConfiguration(b => b.AddJsonFile("soykan.json")) //Özel olan dosya bu şekilde eklenmelidir fakat appsetting ise default olduğundan sıkıntı olmıyacaktır  
                 //Yukarıdaki program.cs tarafına eklendiği gibi eklenmesi gereklidir 
 
@@ -249,6 +249,15 @@ namespace Routing_Mechanism
 
                 //Oluştuurlan yapılandırmada Get metodu ullanarak appSettings verilerini çağırmada zor olucağı için ioc yapılandırmasınıa bu verileri nesne olarak koyup sonrasında ilgili nesneden veriler istenildiği zaman çekilebilir hale gelicektir 
                 //Bu yapılandırma daki kullanıma options pattern denilmektedir 
+
+                //secret.json yapısı belirli configurasyonel değerleri tutulabilir buranın appsetting tarafından farkı güvenlik anlamında Secret manager tools kullanarak yapılmaktadır   
+                //production kısmında yani publish çıktısında  appsetting.json dosyasında veriler hub olarak tutulucaktır bu verilerin ulaşılmaması için kullanılabilir
+                //Bu verilerden bazıları connection string , kritik arz eden tokenlar , authentication yapıları özellikle payment olan kısımlar için 
+                //secret.json verisi C:\Users\AppData\Roaming\Microsoft\UserSecrets
+
+                //Environement nedir ?
+                //Web uygulamasında uygulamanın davranışlarını yönlendirmek ve kontrol etmek için kullanırız 
+                //Mesela Dev stage ya da prod gibi yapılandırmalarda Sql Server yapılandırması için environement lar kulanılabilir 
             });
         }
     }
